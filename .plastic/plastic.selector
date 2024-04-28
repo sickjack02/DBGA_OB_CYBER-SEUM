@@ -1,0 +1,4 @@
+repository "CYBERSEUM@giacomotanduo2502@cloud"
+  path "/"
+    br "/main"
+    co "/main"
