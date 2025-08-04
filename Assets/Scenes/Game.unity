@@ -649,8 +649,8 @@ MonoBehaviour:
     m_NormalColor: {r: 0.02114594, g: 1, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_SelectedColor: {r: 0.9716981, g: 0.9716981, b: 0.9716981, a: 1}
+    m_DisabledColor: {r: 0.019607844, g: 1, b: 0, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -664,7 +664,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1820203191}
   m_FillRect: {fileID: 1820203190}
   m_HandleRect: {fileID: 0}
@@ -676,23 +676,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &699348874 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4812084989530302001, guid: 8681a10d984ead8468883b984cd892d3, type: 3}
-  m_PrefabInstance: {fileID: 1965706401734813989}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &699348878
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 699348874}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8db76755c08d6614d99fed5571b59d43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -2481,7 +2464,7 @@ MonoBehaviour:
   magazine: 10
   bulletsLeft: 0
   bulletsShot: 0
-  fireCooldown: 1
+  fireCooldown: 3
   spread: 0
   isAutomatic: 0
   shooting: 0
@@ -3326,13 +3309,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6151607297615262383, guid: 8681a10d984ead8468883b984cd892d3, type: 3}
+      propertyPath: Healt
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6151607297615262383, guid: 8681a10d984ead8468883b984cd892d3, type: 3}
+      propertyPath: currentHealt
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4812084989530302001, guid: 8681a10d984ead8468883b984cd892d3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 699348878}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8681a10d984ead8468883b984cd892d3, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

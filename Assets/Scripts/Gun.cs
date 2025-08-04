@@ -1,6 +1,8 @@
-using UnityEngine.Events;
-using UnityEngine;
 using System;
+using System.Collections;
+using System.Threading;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Gun : MonoBehaviour
 {
@@ -11,25 +13,38 @@ public class Gun : MonoBehaviour
 
     public float fireCooldown, spread;
 
-    public bool isAutomatic, shooting, readyToShoot, loading;
+    [SerializeField] private bool shooting, readyToShoot;
 
-    private float CurrentCooldown;
+    public bool isAutomatic, loading;
 
     public RaycastHit raycastHit;
 
     public LayerMask enemy;
 
+    private Animator animator;
+
     private void Awake()
     {
         inputActions = new Input_Map();
 
-        inputActions.Player.Shoot.started += ctx => StartShoot();
-        inputActions.Player.Shoot.canceled += ctx => EndShoot();
+        // quando parte voglio che sia già in grado di sparare
+        readyToShoot = true;
+
+        inputActions.Player.Shoot.performed += PerformShot;
+
+        /*inputActions.Player.Shoot.started += ctx => StartShoot();
+        inputActions.Player.Shoot.canceled += ctx => EndShoot();*/
+    }
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
     {
-        if(shooting && readyToShoot) PerformShot();
+        //if(shooting && readyToShoot) PerformShot();
+
     }
 
     private void StartShoot()
@@ -42,29 +57,47 @@ public class Gun : MonoBehaviour
         shooting = false;
     }
 
-    private void PerformShot()
+    public void PerformShot(InputAction.CallbackContext context)
     {
-        readyToShoot = false;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
         // disegna un raggio lungo 100 unità per debug
         Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 1f);
+
+        if (context.performed && readyToShoot)
+        {
+            //shooting = true;
+            Debug.Log("SHOT! (" + context.action + ")");
+
+            animator.SetBool("isShooting", true);
+
+            //Shoot();
+
+            if (Physics.Raycast(ray, out hit, 100f)) Debug.Log("Hai colpito: " + hit.collider.name);
+            else Debug.Log("Nessun oggetto colpito");
+
+            FireCooldown();
+
+        } else return;
         
+        
+        //shooting = false; 
+        
+    }
 
-        if (Physics.Raycast(ray, out hit, 100f))
-        {
-            Debug.Log("Hai colpito: " + hit.collider.name);
-        }
-        else
-        {
-            Debug.Log("Nessun oggetto colpito");
-        }
-
-        Invoke("FireCooldown", fireCooldown);
+    private void Shoot()
+    {
+        throw new NotImplementedException();
     }
 
     private void FireCooldown()
+    {
+        readyToShoot = false;
+        Invoke(nameof(CooldownTimer), fireCooldown);
+    }
+
+    private void CooldownTimer()
     {
         readyToShoot = true;
     }

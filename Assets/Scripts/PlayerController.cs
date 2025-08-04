@@ -8,9 +8,12 @@ public class PlayerController : MonoBehaviour
     public float speed;
     private Vector2 move, mouseLook, joystickLook;
     private Vector3 rotationTarget;
+    
     public bool isPc;
 
     private Animator animator;
+
+    private Gun gunController;
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -31,6 +34,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+        gunController = GetComponent<Gun>();
     }
 
     // Update is called once per frame
@@ -59,6 +63,14 @@ public class PlayerController : MonoBehaviour
                 movePlayerWithAim();
             }
         }
+    }
+
+    // chiama il metodo della classe dell'arma equipaggiata
+    public void Shot(InputAction.CallbackContext context)
+    {
+        animator.SetBool("isShooting", true);
+        gunController.PerformShot(context);
+        animator.SetBool("isShooting", false);
     }
 
     public void MovePlayer()
