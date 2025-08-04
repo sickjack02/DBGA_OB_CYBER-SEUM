@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 rotationTarget;
     public bool isPc;
 
+    private Animator animator;
+
     public void OnMove(InputAction.CallbackContext context)
     {
         move = context.ReadValue<Vector2>();
@@ -28,7 +30,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -65,10 +67,14 @@ public class PlayerController : MonoBehaviour
 
         if (movement != Vector3.zero)
         {
+            animator.SetBool("isMoving", true);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15f);
         }
-
-        transform.Translate(movement * speed * Time.deltaTime, Space.World);
+        else
+        {
+            animator.SetBool("isMoving", false);
+        }
+            transform.Translate(movement * speed * Time.deltaTime, Space.World);
     }
 
     public void movePlayerWithAim()
@@ -83,6 +89,7 @@ public class PlayerController : MonoBehaviour
 
             if(aimDirection != Vector3.zero)
             {
+                
                 transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.15f);
             }
         }else
@@ -95,9 +102,20 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+
         Vector3 movement = new Vector3(move.x, 0f, move.y);
 
+        // CONTROLLA CHE SI MUOVA PRIMA DI CORRERE
+        if (movement != Vector3.zero) { 
+            animator.SetBool("isMoving", true);
+        }
+        else
+        {
+            animator.SetBool("isMoving", false);
+        }
+
         transform.Translate(movement * speed * Time.deltaTime, Space.World);
+
 
     }
 }
