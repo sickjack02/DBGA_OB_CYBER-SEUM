@@ -2443,6 +2443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 4.5
   isPc: 1
+  isShooting: 0
 --- !u!4 &754332118 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7c3824e86f1758c4080f626b9d72d2ac, type: 3}
@@ -2464,11 +2465,11 @@ MonoBehaviour:
   magazine: 10
   bulletsLeft: 0
   bulletsShot: 0
-  fireCooldown: 3
+  fireCooldown: 1
   spread: 0
-  isAutomatic: 0
   shooting: 0
   readyToShoot: 0
+  isAutomatic: 0
   loading: 0
   enemy:
     serializedVersion: 2

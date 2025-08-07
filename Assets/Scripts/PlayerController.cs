@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     private Gun gunController;
+
+    [SerializeField] private bool isShooting;
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -34,12 +37,14 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+
         gunController = GetComponent<Gun>();
     }
 
     // Update is called once per frame
     void Update()
     {
+
         if (isPc)
         {
             RaycastHit hit;
@@ -63,14 +68,7 @@ public class PlayerController : MonoBehaviour
                 movePlayerWithAim();
             }
         }
-    }
 
-    // chiama il metodo della classe dell'arma equipaggiata
-    public void Shot(InputAction.CallbackContext context)
-    {
-        animator.SetBool("isShooting", true);
-        gunController.PerformShot(context);
-        animator.SetBool("isShooting", false);
     }
 
     public void MovePlayer()

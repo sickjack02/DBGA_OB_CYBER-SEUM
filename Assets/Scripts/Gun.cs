@@ -8,7 +8,6 @@ public class Gun : MonoBehaviour
 {
 
     private Input_Map inputActions;
-    // public UnityEvent OnGunShoot;
     public int damage, magazine, bulletsLeft, bulletsShot;
 
     public float fireCooldown, spread;
@@ -26,35 +25,21 @@ public class Gun : MonoBehaviour
     private void Awake()
     {
         inputActions = new Input_Map();
+        animator = GetComponent<Animator>();
 
         // quando parte voglio che sia già in grado di sparare
         readyToShoot = true;
-
         inputActions.Player.Shoot.performed += PerformShot;
-
-        /*inputActions.Player.Shoot.started += ctx => StartShoot();
-        inputActions.Player.Shoot.canceled += ctx => EndShoot();*/
+    
     }
 
     void Start()
     {
-        animator = GetComponent<Animator>();
+
     }
 
     private void Update()
     {
-        //if(shooting && readyToShoot) PerformShot();
-
-    }
-
-    private void StartShoot()
-    {
-        shooting = true;
-    }
-
-    private void EndShoot()
-    {
-        shooting = false;
     }
 
     public void PerformShot(InputAction.CallbackContext context)
@@ -67,12 +52,9 @@ public class Gun : MonoBehaviour
 
         if (context.performed && readyToShoot)
         {
-            //shooting = true;
             Debug.Log("SHOT! (" + context.action + ")");
 
-            animator.SetBool("isShooting", true);
-
-            //Shoot();
+            animator.SetTrigger("Shoot");
 
             if (Physics.Raycast(ray, out hit, 100f)) Debug.Log("Hai colpito: " + hit.collider.name);
             else Debug.Log("Nessun oggetto colpito");
@@ -81,14 +63,6 @@ public class Gun : MonoBehaviour
 
         } else return;
         
-        
-        //shooting = false; 
-        
-    }
-
-    private void Shoot()
-    {
-        throw new NotImplementedException();
     }
 
     private void FireCooldown()
