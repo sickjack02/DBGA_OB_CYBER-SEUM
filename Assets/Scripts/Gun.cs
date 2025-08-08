@@ -9,6 +9,10 @@ public class Gun : MonoBehaviour
 
     private Input_Map inputActions;
     public int damage, magazine, bulletsLeft, bulletsShot;
+    //public float shootForce;
+
+    public Transform firePoint;
+    public GameObject bulletPrefab;
 
     public float fireCooldown, spread;
 
@@ -47,17 +51,37 @@ public class Gun : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        // disegna un raggio lungo 100 unità per debug
-        Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 1f);
+        Vector3 targetPoint;
 
         if (context.performed && readyToShoot)
         {
-            Debug.Log("SHOT! (" + context.action + ")");
+            //Debug.Log("SHOT! (" + context.action + ")");
 
             animator.SetTrigger("Shoot");
 
-            if (Physics.Raycast(ray, out hit, 100f)) Debug.Log("Hai colpito: " + hit.collider.name);
-            else Debug.Log("Nessun oggetto colpito");
+            // disegna un raggio lungo 100 unità per debug
+            if (Physics.Raycast(firePoint.position, transform.TransformDirection(Vector3.forward), out hit, 100))
+            {
+                Debug.DrawRay(firePoint.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.red, 1f);
+                //Debug.Log("Hai colpito: " + hit.collider.name);
+            }
+            else
+            {
+                Debug.Log("Nessun oggetto colpito");
+            }
+
+            if (Physics.Raycast(ray, out RaycastHit rayhit, 100f))
+            {
+                targetPoint = hit.point;
+
+            } else { targetPoint = ray.GetPoint(100f); }
+
+            Vector3 shootDir = (targetPoint - firePoint.position).normalized;    
+            
+            // istanzia il proiettile, la velocità e la forza sono giù inpostati nel prefab di esso
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+
+            bullet.GetComponent<Bullet>().SetDirection(shootDir);
 
             FireCooldown();
 
