@@ -85,6 +85,7 @@ public class Gun : MonoBehaviour
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 
             bullet.GetComponent<Bullet>().SetDirection(shootDir);
+            bullet.GetComponent<Bullet>().SetDamage(damage);
 
             FireCooldown();
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,21 +7,34 @@ public class Enemy : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public int Healt, currentHealt;
+    public float health, currentHealth;
+
+    [SerializeField] FloatingHealhtBar healthBar;
+    private void Awake()
+    {
+        healthBar = GetComponentInChildren<FloatingHealhtBar>();
+    }
 
     void Start()
     {
-        
+        healthBar.UpdateHealthBar(currentHealth, health);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (currentHealt == 0) { Enemy.Destroy(gameObject); }
+
     }
 
-    private void OnHit()
+    public void OnHit(float damageValue)
     {
+        currentHealth -= damageValue;
+        healthBar.UpdateHealthBar(currentHealth, health);
+        if (currentHealth <= 0) Die();
+    }
 
+    private void Die()
+    {
+        Destroy(gameObject);
     }
 }

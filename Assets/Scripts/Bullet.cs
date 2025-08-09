@@ -10,6 +10,8 @@ public class Bullet : MonoBehaviour
     public float shootForce;
     private Vector3 moveDir;
 
+    private float damage;
+
     //private float lifetime = 3f;
 
     void Start()
@@ -27,15 +29,29 @@ public class Bullet : MonoBehaviour
         moveDir = dir;
     }
 
+    public void SetDamage(float dmg)
+    {
+        damage = dmg;
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (destroyOnTags.Contains(collision.gameObject.tag))
         {
             Debug.Log("Colpito " + collision.gameObject.name);
             //Destroy(collision.gameObject);  opzionale: distrugge il nemico
+            
+            if(collision.gameObject.name == "Enemy")
+            {
+                Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    enemy.OnHit(damage);
+                }
+            }
+            
             Destroy(gameObject);
-        }
-
-        
+        }           
     }
+
 }
