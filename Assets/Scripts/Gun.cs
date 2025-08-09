@@ -13,6 +13,7 @@ public class Gun : MonoBehaviour
 
     public Transform firePoint;
     public GameObject bulletPrefab;
+    public ParticleSystem muzzleFlash;
 
     public float fireCooldown, spread;
 
@@ -76,8 +77,10 @@ public class Gun : MonoBehaviour
 
             } else { targetPoint = ray.GetPoint(100f); }
 
-            Vector3 shootDir = (targetPoint - firePoint.position).normalized;    
-            
+            Vector3 shootDir = (targetPoint - firePoint.position).normalized;
+
+            muzzleFlash.Play();
+
             // istanzia il proiettile, la velocità e la forza sono giù inpostati nel prefab di esso
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 
