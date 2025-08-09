@@ -38,8 +38,7 @@ public class Bullet : MonoBehaviour
     {
         if (destroyOnTags.Contains(collision.gameObject.tag))
         {
-            Debug.Log("Colpito " + collision.gameObject.name);
-            //Destroy(collision.gameObject);  opzionale: distrugge il nemico
+            //Debug.Log("Colpito " + collision.gameObject.name);
             
             if(collision.gameObject.name == "Enemy")
             {

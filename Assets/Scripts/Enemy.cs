@@ -2,17 +2,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Enemy : MonoBehaviour
 {
-    // Start is called before the first frame update
 
-    public float health, currentHealth;
+    public float health;
+    private float currentHealth;
 
     [SerializeField] FloatingHealhtBar healthBar;
+    [SerializeField] private GameObject floatingTextPrefab;
+
     private void Awake()
     {
         healthBar = GetComponentInChildren<FloatingHealhtBar>();
+        currentHealth = health;
     }
 
     void Start()
@@ -20,16 +24,11 @@ public class Enemy : MonoBehaviour
         healthBar.UpdateHealthBar(currentHealth, health);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void OnHit(float damageValue)
     {
         currentHealth -= damageValue;
         healthBar.UpdateHealthBar(currentHealth, health);
+        healthBar.ShowDamage(damageValue.ToString());
         if (currentHealth <= 0) Die();
     }
 
@@ -37,4 +36,6 @@ public class Enemy : MonoBehaviour
     {
         Destroy(gameObject);
     }
+
+
 }

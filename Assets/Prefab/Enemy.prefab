@@ -178,8 +178,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 3964160352987981892}
+  damageTxt: {fileID: 3021423805936007807, guid: dd23142889fb49f4b8b8edca6e1b7eea, type: 3}
   target: {fileID: 8807103471415671541}
-  offset: {x: 0, y: 2, z: 0}
+  offsetSlider: {x: 0, y: 2, z: 0}
+  offsetDamage: {x: -0.3, y: -1, z: 0}
 --- !u!1 &4403972491877732760
 GameObject:
   m_ObjectHideFlags: 0
@@ -403,7 +405,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.55
+      value: -2.491979
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -411,7 +413,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.753
+      value: -0.025
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -506,9 +508,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8db76755c08d6614d99fed5571b59d43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
-  currentHealth: 10
+  health: 100
   healthBar: {fileID: 886053503940101370}
+  floatingTextPrefab: {fileID: 3021423805936007807, guid: dd23142889fb49f4b8b8edca6e1b7eea, type: 3}
 --- !u!23 &3553268995893139320
 MeshRenderer:
   m_ObjectHideFlags: 0
