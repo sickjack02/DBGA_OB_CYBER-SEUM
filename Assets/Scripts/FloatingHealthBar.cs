@@ -12,12 +12,18 @@ public class FloatingHealhtBar : MonoBehaviour
     [SerializeField] private Transform target;
     [SerializeField] private Vector3 offsetSlider;
     [SerializeField] private Vector3 offsetDamage;
+    private Camera cam;
+
+    private void Start()
+    {
+        cam = Camera.main;
+    }
 
     // Update is called once per frame
-
     void Update()
     {
-        transform.rotation = Camera.main.transform.rotation;
+        // guarda sempre la camera main, stessa cosa per ShowDamage
+        transform.rotation = Quaternion.LookRotation(transform.position - cam.transform.position);
 
         // setta dove voglio lo slider
         transform.position = target.position + offsetSlider;
@@ -34,7 +40,7 @@ public class FloatingHealhtBar : MonoBehaviour
     {
         if (damageTxt)
         {
-            GameObject prefab = Instantiate(damageTxt, transform.position + offsetDamage, Quaternion.identity);
+            GameObject prefab = Instantiate(damageTxt, transform.position + offsetDamage, Quaternion.LookRotation(transform.position - cam.transform.position));
             prefab.GetComponentInChildren<TextMeshProUGUI>().text = text;
             Destroy(prefab, 1f);
         }

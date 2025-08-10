@@ -23,7 +23,7 @@ public class Gun : MonoBehaviour
 
     public RaycastHit raycastHit;
 
-    public LayerMask enemy;
+    //public LayerMask enemy;
 
     private Animator animator;
 
