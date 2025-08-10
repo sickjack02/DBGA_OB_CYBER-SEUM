@@ -128,4 +128,9 @@ public class PlayerController : MonoBehaviour
 
 
     }
+
+    public void TakeDamage(float damageValue)
+    {
+        Debug.Log("player colpito, danno: " + damageValue);
+    }
 }

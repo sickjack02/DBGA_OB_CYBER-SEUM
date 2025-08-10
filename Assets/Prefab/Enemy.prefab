@@ -182,6 +182,37 @@ MonoBehaviour:
   target: {fileID: 8807103471415671541}
   offsetSlider: {x: 0, y: 2, z: 0}
   offsetDamage: {x: -0.8, y: -0.6, z: 0}
+--- !u!1 &3013349240625062106
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5552977826271728860}
+  m_Layer: 0
+  m_Name: ShootStartEnemy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5552977826271728860
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3013349240625062106}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.056, z: 0.096}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3194616770561452150}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4403972491877732760
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,6 +488,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6025971900213027184}
+    - targetCorrespondingSourceObject: {fileID: -3321919801592875672, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5552977826271728860}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
       insertIndex: -1
@@ -471,6 +505,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2895489155518293321}
   m_SourcePrefab: {fileID: 100100000, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
+--- !u!4 &3194616770561452150 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3321919801592875672, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
+  m_PrefabInstance: {fileID: 9057764199046470942}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8174822074614243407 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 20edbe9fa77909d4ab40200901b46c2b, type: 3}
@@ -515,12 +554,17 @@ MonoBehaviour:
   healthBar: {fileID: 886053503940101370}
   floatingTextPrefab: {fileID: 3021423805936007807, guid: dd23142889fb49f4b8b8edca6e1b7eea, type: 3}
   currentState: 0
+  distanceToPlayer: 0
   chaseSpeed: 2
   meleeAttackDistance: 2
+  meleeAttackCooldown: 1.5
   rangeAttackDistance: 8
-  enemyBulletPrefab: {fileID: 0}
-  shootPoint: {fileID: 0}
-  retreatDistance: 10
+  rangeAttackCooldown: 1.5
+  enemyBulletPrefab: {fileID: 3964726475250731907, guid: 96f8c9d22bd10e34d976c4e2d00c7fba, type: 3}
+  shootPoint: {fileID: 5552977826271728860}
+  bulleteDamage: 5
+  retreatDistance: 4
+  rangeRetreatDistance: 5
 --- !u!23 &3553268995893139320
 MeshRenderer:
   m_ObjectHideFlags: 0

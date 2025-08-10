@@ -45,6 +45,7 @@ public class Gun : MonoBehaviour
 
     private void Update()
     {
+
     }
 
     public void PerformShot(InputAction.CallbackContext context)

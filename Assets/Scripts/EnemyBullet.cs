@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class EnemyBullet : MonoBehaviour
 {
     [Header("Tags che distruggono il proiettile")]
     public List<string> destroyOnTags;
@@ -39,25 +39,15 @@ public class Bullet : MonoBehaviour
         if (destroyOnTags.Contains(collision.gameObject.tag))
         {
             //Debug.Log("Colpito " + collision.gameObject.name);
-            
-            if(collision.gameObject.name == "Enemy")
-            {
-                Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-                if (enemy != null)
-                {
-                    enemy.OnHit(damage);
-                }
-            }
-            
+
             if (collision.gameObject.name == "Player")
             {
-                PlayerController  player = collision.gameObject.GetComponent<PlayerController>();
+                PlayerController player = collision.gameObject.GetComponent<PlayerController>();
                 if (player != null)
                     player.TakeDamage(damage);
             }
 
             Destroy(gameObject);
-        }           
+        }
     }
-
 }

@@ -29,22 +29,27 @@ public class Enemy : MonoBehaviour
 
     [Header("Components")]
     NavMeshAgent agent;
+    [SerializeField] private float distanceToPlayer;
 
     [Header("Chasing Settings")]
     public float chaseSpeed;
 
     [Header("Melee Attack Settings")]
     public float meleeAttackDistance;
+    [SerializeField] private float meleeAttackCooldown = 1.5f;
+    private float meleeAttackTimer = 0f;
 
     [Header("Range Attack Settings")]
     public float rangeAttackDistance;
+    [SerializeField] private float rangeAttackCooldown = 1.5f; // i secondi che deve aspettare per sparare dopo che spara
+    private float rangeAttackTimer = 0f; // parte da 0 perché poi lo faccio andare a rangeAttackCooldownquando ha sparato
     public GameObject enemyBulletPrefab;
     public Transform shootPoint;
-    private float rangeAttackCooldown = 1.5f; // i secondi che deve aspettare per sparare dopo che spara
-    private float rangeAttackTimer = 0f; // parte da 0 perché poi lo faccio andare a rangeAttackCooldownquando ha sparato
+    public int bulleteDamage;
 
     [Header("Retreat Settings")]
     public float retreatDistance;
+    public float rangeRetreatDistance;
     private float retreatTimer = 3f;
 
     private void Awake()
@@ -65,12 +70,22 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+        distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
 
         if (rangeAttackTimer > 0)
         {
             rangeAttackTimer -= Time.deltaTime;
         }
+
+        if (meleeAttackTimer > 0)
+        {
+            meleeAttackTimer -= Time.deltaTime;
+        }
+
+        /*if(distanceToPlayer <= rangeRetreatDistance)
+        {
+            ChangeState(AIState.Retreat);
+        }*/
 
         switch (currentState) 
         { 
@@ -88,51 +103,6 @@ public class Enemy : MonoBehaviour
                 break;
         }
     }
-
-    private void MeleeAttack(float distance)
-    {
-        agent.ResetPath();
-        Debug.Log("Attacco melee");
-
-        if (distance > meleeAttackDistance) { ChangeState(AIState.Chasing); }
-    }
-
-    private void RangeAttack(float distance)
-    {
-        agent.ResetPath();
-        Debug.Log("In range per il range");
-
-        if (rangeAttackCooldown <= 0)
-        {
-            Debug.Log("Attacco range");
-            // metodo per sparare
-            rangeAttackTimer = rangeAttackCooldown;
-        }
-
-        // una volta sparato controllo dove si trova il Player per sparare ancora o inseguirlo
-        if (distance <= meleeAttackDistance)
-            ChangeState(AIState.Melee_Attack);
-        else if (distance > rangeAttackDistance)
-            ChangeState(AIState.Chasing);
-
-    }
-
-    private void RetreatFromPlayer(float distance)
-    {
-        retreatTimer -= Time.deltaTime;
-
-        Vector3 dirAway = (transform.position - player.transform.position).normalized;
-        agent.SetDestination(transform.position +  dirAway * retreatDistance);
-
-        if (retreatTimer <= 0)
-        {
-            ChangeState(UnityEngine.Random.value > 0.5 ? AIState.Range_Attack : AIState.Chasing);
-            Debug.Log("Dopo ritirata uso " + currentState);
-        }
-        else if (distance <= meleeAttackDistance)
-            ChangeState(AIState.Melee_Attack);
-    }
-
     private void ChasePlayer(float distance)
     {
         agent.SetDestination(player.transform.position);
@@ -146,6 +116,74 @@ public class Enemy : MonoBehaviour
             ChangeState(AIState.Range_Attack);
         }
     }
+
+    private void MeleeAttack(float distance)
+    {
+        agent.ResetPath();
+
+        if (meleeAttackTimer <= 0)
+        {
+            Debug.Log("Attacco melee");
+            meleeAttackTimer = meleeAttackCooldown;
+        }
+
+        if (distance > meleeAttackDistance) { ChangeState(AIState.Chasing); }
+    }
+
+    private void RangeAttack(float distance)
+    {
+        agent.ResetPath();
+        
+        if (rangeAttackTimer <= 0) {
+            ShootProjectile();
+            rangeAttackTimer = rangeAttackCooldown;
+        }
+
+        ChangeState(AIState.Chasing);
+    }
+
+    void ShootProjectile()
+    {
+        if (enemyBulletPrefab && shootPoint)
+        {
+            GameObject bullet = Instantiate(enemyBulletPrefab, shootPoint.position, shootPoint.rotation);
+            bullet.GetComponent<EnemyBullet>().SetDirection(transform.forward);
+            bullet.GetComponent<EnemyBullet>().SetDamage(bulleteDamage);
+        }
+    }
+
+    private void RetreatFromPlayer(float distance)
+    {
+        agent.updateRotation = false;
+
+        retreatTimer -= Time.deltaTime;
+
+        Vector3 dirAway = (transform.position - player.transform.position).normalized;
+        agent.ResetPath();
+        agent.SetDestination(transform.position +  dirAway * retreatDistance);
+
+        Vector3 lookDir = player.transform.position - transform.position;
+        lookDir.y = 0;
+        if(lookDir != Vector3.zero) 
+            transform.rotation = Quaternion.LookRotation(lookDir);
+
+        if (retreatTimer <= 0)
+        { // dopo che ha finito di scappare controllo se il player si trova in range di sparo
+            // se sì sparo
+            if(distanceToPlayer <= rangeAttackDistance)
+                ChangeState(AIState.Range_Attack);
+            // se no inseguo
+            else
+                ChangeState(AIState.Chasing);
+            
+            Debug.Log("Dopo ritirata uso " + currentState);
+        }
+        else if (distance <= meleeAttackDistance)
+            ChangeState(AIState.Melee_Attack);
+
+        agent.updateRotation = true;
+    }
+
 
     private void ChangeState(AIState newState)
     {
