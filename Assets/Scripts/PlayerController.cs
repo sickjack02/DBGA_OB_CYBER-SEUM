@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour
     public float speed;
     private Vector2 move, mouseLook, joystickLook;
     private Vector3 rotationTarget;
-    
+
+    public int health;
     public bool isPc;
 
     private Animator animator;

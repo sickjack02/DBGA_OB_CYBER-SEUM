@@ -48,13 +48,6 @@ public class Bullet : MonoBehaviour
                     enemy.OnHit(damage);
                 }
             }
-            
-            if (collision.gameObject.name == "Player")
-            {
-                PlayerController  player = collision.gameObject.GetComponent<PlayerController>();
-                if (player != null)
-                    player.TakeDamage(damage);
-            }
 
             Destroy(gameObject);
         }           

@@ -7,6 +7,7 @@ using UnityEngine.AI;
 using UnityEngine.XR;
 
 using Random = System.Random;
+using System.Linq;
 
 public class Enemy : MonoBehaviour
 {
@@ -18,6 +19,11 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject floatingTextPrefab;
 
     private GameObject player;
+    public LayerMask playerLayer;
+
+    private Animator animator;
+    private float stateTimer;
+    [SerializeField] private bool isLockedInState;
 
     enum AIState
     {
@@ -38,11 +44,13 @@ public class Enemy : MonoBehaviour
     public float meleeAttackDistance;
     [SerializeField] private float meleeAttackCooldown = 1.5f;
     private float meleeAttackTimer = 0f;
+    public int meleeDamage;
+    public Transform hitbox;
 
     [Header("Range Attack Settings")]
     public float rangeAttackDistance;
     [SerializeField] private float rangeAttackCooldown = 1.5f; // i secondi che deve aspettare per sparare dopo che spara
-    private float rangeAttackTimer = 0f; // parte da 0 perché poi lo faccio andare a rangeAttackCooldownquando ha sparato
+    [SerializeField] private float rangeAttackTimer = 0f; // parte da 0 perché poi lo faccio andare a rangeAttackCooldownquando ha sparato
     public GameObject enemyBulletPrefab;
     public Transform shootPoint;
     public int bulleteDamage;
@@ -51,6 +59,11 @@ public class Enemy : MonoBehaviour
     public float retreatDistance;
     public float rangeRetreatDistance;
     private float retreatTimer = 3f;
+
+
+
+    //ho notato che per colpa della NavMesh fluttua
+    private float groundHeight = 0;
 
     private void Awake()
     {
@@ -66,26 +79,54 @@ public class Enemy : MonoBehaviour
         agent.speed = chaseSpeed;
 
         player = GameObject.FindGameObjectWithTag("Player");
+        animator = GetComponent<Animator>();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (hitbox == null)
+            return;
+
+        Gizmos.color = Color.red;
+
+        foreach (Transform point in hitbox)
+        {
+            if (point != null)
+                Gizmos.DrawWireSphere(point.position, meleeAttackDistance);
+        }
     }
 
     private void Update()
     {
         distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+        
+        // costringo a rimanere a terra, un po' rozzo ma mi dà fastidio che sembra che fluttui
+        Vector3 pos = transform.position;
+        pos.y = groundHeight; // valore fisso
+        transform.position = pos;
+
+        // timer per i colpi melee e range
+        if (meleeAttackTimer > 0)
+        {
+            meleeAttackTimer -= Time.deltaTime;
+        }
 
         if (rangeAttackTimer > 0)
         {
             rangeAttackTimer -= Time.deltaTime;
         }
 
-        if (meleeAttackTimer > 0)
-        {
-            meleeAttackTimer -= Time.deltaTime;
-        }
-
         /*if(distanceToPlayer <= rangeRetreatDistance)
         {
             ChangeState(AIState.Retreat);
         }*/
+
+        if (isLockedInState) 
+        {
+            stateTimer -= Time.deltaTime;
+            if(stateTimer <= 0) 
+                isLockedInState = false;
+        }
 
         switch (currentState) 
         { 
@@ -98,14 +139,15 @@ public class Enemy : MonoBehaviour
             case AIState.Range_Attack:
                 RangeAttack(distanceToPlayer);
                 break;
-            case AIState.Retreat:
+            /*case AIState.Retreat:
                 RetreatFromPlayer(distanceToPlayer);
-                break;
+                break;*/
         }
     }
     private void ChasePlayer(float distance)
     {
         agent.SetDestination(player.transform.position);
+        animator.SetBool("IsChasing", true);
 
         if (distance <= meleeAttackDistance)
         {
@@ -120,26 +162,39 @@ public class Enemy : MonoBehaviour
     private void MeleeAttack(float distance)
     {
         agent.ResetPath();
+        animator.SetBool("IsChasing", false);
 
-        if (meleeAttackTimer <= 0)
+
+        if (meleeAttackTimer <= 0 && distance <= meleeAttackDistance)
         {
-            Debug.Log("Attacco melee");
+            //Debug.Log("Attacco melee");
+            animator.SetTrigger("MeleeAttack");
             meleeAttackTimer = meleeAttackCooldown;
         }
 
-        if (distance > meleeAttackDistance) { ChangeState(AIState.Chasing); }
+        if (distance >= meleeAttackDistance) {
+            ChangeState(AIState.Chasing);
+        }
     }
 
     private void RangeAttack(float distance)
     {
         agent.ResetPath();
-        
-        if (rangeAttackTimer <= 0) {
-            ShootProjectile();
-            rangeAttackTimer = rangeAttackCooldown;
-        }
+        animator.SetBool("IsChasing", false);
 
-        ChangeState(AIState.Chasing);
+        if (rangeAttackTimer <= 0 && distance <= rangeAttackDistance) {
+            //Debug.Log("Attacco range");
+            animator.SetTrigger("RangeAttack");
+            // lo faccio sparare dopo l'avvio dell'animazione, nel momento giusto
+            Invoke(nameof(ShootProjectile), 1f);
+            rangeAttackTimer = rangeAttackCooldown;
+        } 
+
+        if(distance >= rangeAttackDistance)
+            ChangeState(AIState.Chasing);
+        if (distance <= meleeAttackDistance)
+            ChangeState(AIState.Melee_Attack);
+        //
     }
 
     void ShootProjectile()
@@ -187,10 +242,52 @@ public class Enemy : MonoBehaviour
 
     private void ChangeState(AIState newState)
     {
+        if (isLockedInState) return;
+
         currentState = newState;
 
-        if (newState == AIState.Retreat)
-            retreatTimer = retreatTimer;
+        float animDuration = GetCurrentAnimationDuration(newState);
+        if (animDuration > 0f)
+            LockState(animDuration);
+
+        /*if (newState == AIState.Retreat)
+            retreatTimer = retreatTimer;*/
+    }
+
+    private void LockState(float duration)
+    {
+        animator.SetBool("IsChasing", false);
+        isLockedInState = true;
+        stateTimer = duration;
+    }
+
+    private float GetCurrentAnimationDuration(AIState state)
+    {
+        string animName = "";
+
+        switch (state) 
+        {
+            case AIState.Melee_Attack:
+                animName = "Enemy attack 1";
+                break;
+            case AIState.Range_Attack:
+                animName = "Enemy Scream";
+                break;
+            case AIState.Retreat:
+                animName = "Retreat";
+                break;
+        }
+
+        if (string.IsNullOrEmpty(animName)) return 0f;
+
+        foreach(var clip in animator.runtimeAnimatorController.animationClips)
+        {
+            if(clip.name == animName)
+                return clip.length;
+            //Debug.Log(clip.name);
+        }
+
+        return 0f;
     }
 
     public void OnHit(float damageValue)
@@ -209,5 +306,22 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void Attack()
+    {
+        
+
+            bool playerHitted = false;
+
+            Collider hits = Physics.OverlapSphere(hitbox.position, 1f, playerLayer).FirstOrDefault();
+
+            if (hits != null && !playerHitted)
+            {
+                player.GetComponent<PlayerController>().TakeDamage(meleeDamage);
+                //Debug.Log("player colpito melee");
+                playerHitted = true;
+            }
+    }
+        
+    
 
 }
